@@ -1,0 +1,113 @@
+<Slide direction="up" in={true}>
+                {/* Colunm image */}
+                <Grid container spacing={1}>
+                    <Grid item md={6}>
+                        <img
+                            src={product.media.source}
+                            alt={product.name}
+                            className={classes.largeImage}
+                        />
+                    </Grid>
+                </Grid>
+                {/* Colunm Description producs */}
+
+                <Grid item md={3} xs={12}>
+                    <List>
+                        <ListItem>
+                            <Typography
+                                gutterBottom
+                                variant="h6"
+                                color="textPrimary"
+                                component="h1"
+                            >
+                                {product.name}
+                            </Typography>
+                        </ListItem>
+                        <ListItem>
+                            <Box
+                                dangerouslySetInnerHTML={{ __html: product.description }}
+                            ></Box>
+                        </ListItem>
+                    </List>
+                </Grid>
+                {/* Colunm QTD and Select */}
+
+                <Grid item md={3} xs={12}>
+                    <Card>
+                        <List>
+
+                            <ListItem>
+                                <Grid container>
+                                    <Grid item xs={6}>
+                                        Price
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        {product.price.formatted_with_symbol}
+                                    </Grid>
+                                </Grid>
+                            </ListItem>
+
+                            <ListItem>
+                                <Grid alignItems="center" container>
+                                    <Grid item xs={6}>
+                                        Status
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        {product.quantity > 0 ? (
+                                            <Alert icon={false} severity="success">
+                                                In Stock
+                                            </Alert>
+                                        ) : (
+                                            <Alert icon={false} severity="error">
+                                                Unavailable
+                                            </Alert>
+                                        )}
+                                    </Grid>
+                                </Grid>
+                            </ListItem>
+
+                            {product.quantity > 0 && (
+
+                                <>
+                                    <ListItem>
+                                        <Grid container justify="flex-end">
+                                            <Grid item xs={6}>
+                                                Quantity
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Select
+                                                    labelId="quanitity-label"
+                                                    id="quanitity"
+                                                    fullWidth
+                                                    onChange={(e) => setQuantity(e.target.value)}
+                                                    value={quantity}
+                                                >
+                                                    {[...Array(product.quantity).keys()].map((x) => (
+                                                        <MenuItem key={x + 1} value={x + 1}>
+                                                            {x + 1}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </Grid>
+                                        </Grid>
+                                    </ListItem>
+                                    <ListItem>
+                                        <Button
+                                            type="button"
+                                            fullWidth
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={addToCartHandler}
+                                        >
+                                            Add to cart
+                                        </Button>
+                                    </ListItem>
+
+                                </>
+                            )}
+
+                        </List>
+                    </Card>
+                </Grid>
+
+            </Slide>

@@ -1,16 +1,49 @@
-import { AppBar, Box, Container, CssBaseline, Link, ThemeProvider, Toolbar, Typography, H } from '@material-ui/core'
+import Head from 'next/head';
+import React, { useContext, useEffect } from 'react';
+import AppBar from '@material-ui/core/AppBar';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Link from '@material-ui/core/Link';
 import NextLink from 'next/link';
-import Head from 'next/head'
-import React from 'react';
-import { theme, useStyles } from '../utils/styles'
+import { ThemeProvider } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+import Box from '@material-ui/core/Box';
+import { theme } from '../utils/styles';
+// import { siteName } from '../utils/config';
+import { Badge, CircularProgress } from '@material-ui/core';
+import { useStyles } from '../utils/styles';
+import { Store } from './Store';
+import {
+    CART_RETRIEVE_REQUEST,
+    CART_RETRIEVE_SUCCESS,
+} from '../utils/constants';
+import getCommerce from '../utils/commerce';
+
+//refatorar pelo o amor de Deus
+
+const teste = "pk_test_23235567f97b287fbf41bd15f08ed86fd4659468c09cb"
 
 export default function Layout({
     children,
     commercePublicKey,
-    title = 'CoolCommerce',
+    title = 'Coolshop',
 }) {
+    const classes = useStyles();
 
-    const classes = useStyles()
+    const { state, dispatch } = useContext(Store);
+    const { cart } = state;
+
+    useEffect(() => {
+        const fetchCart = async () => {
+            const commerce = getCommerce(teste);
+            dispatch({ type: CART_RETRIEVE_REQUEST });
+            const cartData = await commerce.cart.retrieve();
+            dispatch({ type: CART_RETRIEVE_SUCCESS, payload: cartData });
+        };
+        fetchCart();
+    }, [])
+
 
     return (
         <React.Fragment>
@@ -54,7 +87,15 @@ export default function Layout({
                                     href="/cart"
                                     className={classes.link}
                                 >
-                                    Carrinho
+                                    {cart.loading ? (
+                                        <CircularProgress />
+                                    ) : cart.data.total_items > 0 ? (
+                                    <Badge badgeContent={cart.data.total_items} color="primary">
+                                        Cart
+                                    </Badge>
+                                    ) : (
+                                    'Cart'
+                                    )}
                                 </Link>
                             </NextLink>
                         </nav>

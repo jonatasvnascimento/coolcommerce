@@ -17,8 +17,10 @@ import {
 import { Alert } from '@material-ui/lab'
 import Layout from '../../components/Layout'
 import getCommerce from '../../utils/commerce'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useStyles } from '../../utils/styles'
+import { Store } from '../../components/Store'
+import { CART_RETRIEVE_SUCCESS } from '../../utils/constants'
 
 
 export default function Product(props) {
@@ -26,13 +28,32 @@ export default function Product(props) {
     const [quantity, setQuantity] = useState(1)
 
     const classes = useStyles()
+    const { state, dispatch } = useContext(Store);
+    const { cart } = state;
 
     const addToCartHandler = async () => {
-        console.log('add to cart')
-    }
+        const commerce = getCommerce(props.commercePublicKey);
+        const lineItem = cart.data.line_items.find(
+            (x) => x.product_id === product.id
+        )
+        if (lineItem) {
+            const cartData = await commerce.cart.update(lineItem.id, {
+                quantity: quantity,
+            });
+            dispatch({ type: CART_RETRIEVE_SUCCESS, payload: cartData.cart });
+            // Router.push('/cart');
+        } else {
+            const cartData = await commerce.cart.add(product.id, quantity);
+            dispatch({ type: CART_RETRIEVE_SUCCESS, payload: cartData.cart });
+            // Router.push('/cart');    
+        }
+    };
 
     return (
-        <Layout>
+        <Layout
+            title={product.name}
+            commercePublicKey={props.commercePublicKey}
+        >
             <Slide key={product.name} direction="up" in={true}>
                 <Grid container spacing={1}>
                     <Grid item md={6}>
@@ -107,7 +128,7 @@ export default function Product(props) {
                                                         fullWidth
                                                         defaultValue={""}
                                                         onChange={(e) => setQuantity(e.target.value)}
-                                                        value={product.inventory.available}
+                                                        value={quantity}
                                                     >
                                                         {[...Array(product.inventory.available).keys()].map((x) => (
                                                             <MenuItem key={x + 1} value={x + 1}>

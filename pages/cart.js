@@ -29,6 +29,7 @@ import getCommerce from '../utils/commerce';
 
 function Cart(props) {
     const classes = useStyles();
+
     const { state, dispatch } = useContext(Store);
     const { cart } = state;
 
@@ -36,6 +37,7 @@ function Cart(props) {
         const commerce = getCommerce(props.commercePublicKey);
         const cartData = await commerce.cart.remove(lineItem.id);
         dispatch({ type: CART_RETRIEVE_SUCCESS, payload: cartData.cart });
+
     };
     const quantityChangeHandler = async (lineItem, quantity) => {
         const commerce = getCommerce(props.commercePublicKey);
@@ -46,7 +48,7 @@ function Cart(props) {
     };
 
     const proccessToCheckout = () => {
-        Router.push('/checkout');
+        // Router.push('/checkout');
     };
     return (
         <Layout commercePublicKey={props.commercePublicKey} title="Shopping Cart">
@@ -93,7 +95,7 @@ function Cart(props) {
                                                                 }
                                                                 value={cartItem.quantity}
                                                             >
-                                                                {[...Array(10).keys()].map((x) => (
+                                                                {[...Array(20).keys()].map((x) => (
                                                                     <MenuItem key={x + 1} value={x + 1}>
                                                                         {x + 1}
                                                                     </MenuItem>

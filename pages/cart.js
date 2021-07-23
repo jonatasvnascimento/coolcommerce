@@ -48,7 +48,7 @@ function Cart(props) {
     };
 
     const proccessToCheckout = () => {
-        // Router.push('/checkout');
+        Router.push('/checkout');
     };
     return (
         <Layout commercePublicKey={props.commercePublicKey} title="Shopping Cart">

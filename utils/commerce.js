@@ -13,4 +13,6 @@ function getCommerce(commercePublicKey) {
     return commerce;
   }
 }
+
+
 export default getCommerce;

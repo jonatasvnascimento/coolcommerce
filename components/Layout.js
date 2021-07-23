@@ -20,17 +20,14 @@ import {
 } from '../utils/constants';
 import getCommerce from '../utils/commerce';
 
-//refatorar pelo o amor de Deus
-
-const teste = "pk_test_23235567f97b287fbf41bd15f08ed86fd4659468c09cb"
-
 export default function Layout({
     children,
     commercePublicKey,
     title = 'Coolshop',
 }) {
     const classes = useStyles();
-
+    
+    const teste = "pk_test_23235567f97b287fbf41bd15f08ed86fd4659468c09cb"
     const { state, dispatch } = useContext(Store);
     const { cart } = state;
 

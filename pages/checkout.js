@@ -22,9 +22,9 @@ import {
 import { useStyles } from '../utils/styles';
 import { Store } from '../components/Store';
 import Router from 'next/router';
-import { ORDER_SET } from '../utils/constants';
 import dynamic from 'next/dynamic';
 import { Alert } from '@material-ui/lab';
+import { ORDER_SET } from '../utils/constants';
 const dev = process.env.NODE_ENV === 'development'; // remove "|| true" in production
 
 function Checkout(props) {
@@ -95,8 +95,65 @@ function Checkout(props) {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
 
         if (activeStep === steps.length - 1) {
-            //   handleCaptureCheckout();
+            handleCaptureCheckout();
         }
+    };
+
+    const handleCaptureCheckout = async () => {
+        const orderData = {
+            line_items: checkoutToken.live.line_items,
+            customer: {
+                firstname: firstName,
+                lastname: lastName,
+                email: email,
+            },
+            shipping: {
+                name: shippingName,
+                street: shippingStreet,
+                town_city: shippingCity,
+                county_state: shippingStateProvince,
+                postal_zip_code: shippingPostalZipCode,
+                country: shippingCountry,
+            },
+            fulfillment: {
+                shipping_method: shippingOption,
+            },
+            payment: {
+                gateway: 'test_gateway',
+                card: {
+                    number: cardNum,
+                    expiry_month: expMonth,
+                    expiry_year: expYear,
+                    cvc: cvv,
+                    postal_zip_code: billingPostalZipcode,
+                },
+            },
+        };
+
+        const commerce = getCommerce(props.commercePublicKey);
+        try {
+            const order = await commerce.checkout.capture(
+                checkoutToken.id,
+                orderData
+            );
+            dispatch({ type: ORDER_SET, payload: order });
+            localStorage.setItem('order_receipt', JSON.stringify(order));
+            await refreshCart();
+            // Router.push('/confirmation');
+        } catch (err) {
+            const errList = [err.data.error.message];
+            const errs = err.data.error.errors;
+            for (const index in errs) {
+                errList.push(`${index}: ${errs[index]}`);
+            }
+            setErrors(errList);
+        }
+    };
+
+    const refreshCart = async () => {
+        const commerce = getCommerce(props.commercePublicKey);
+        const newCart = await commerce.cart.refresh();
+        dispatch({ type: CART_RETRIEVE_SUCCESS, payload: newCart });
     };
 
     const [errors, setErrors] = useState([])
@@ -408,7 +465,7 @@ function Checkout(props) {
                                                     ))}
                                                 </List>
                                                 <Box className={classes.mt1}>
-                                                    <Button className={classes.button}>
+                                                    <Button onClick={handleBack} className={classes.button}>
                                                         Back
                                                     </Button>
                                                 </Box>

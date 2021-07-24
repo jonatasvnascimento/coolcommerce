@@ -24,7 +24,7 @@ import { Store } from '../components/Store';
 import Router from 'next/router';
 import dynamic from 'next/dynamic';
 import { Alert } from '@material-ui/lab';
-import { ORDER_SET } from '../utils/constants';
+import { CART_RETRIEVE_REQUEST, CART_RETRIEVE_SUCCESS, ORDER_SET } from '../utils/constants';
 const dev = process.env.NODE_ENV === 'development'; // remove "|| true" in production
 
 function Checkout(props) {
@@ -54,7 +54,7 @@ function Checkout(props) {
     // Nome sobrenome
     const [firstName, setFirstName] = useState(dev ? 'Leticia' : '');
     const [lastName, setLastName] = useState(dev ? 'Emanuelly' : '');
-    const [email, setEmail] = useState(dev ? 'Leticia.Emanuelly@email.com' : '');
+    const [email, setEmail] = useState(dev ? 'Leticia.Emanuelly@emailz.com' : '');
 
     // Rua endereço
     const [shippingName, setShippingName] = useState(dev ? 'Leticia emanuelly' : '');
@@ -139,7 +139,8 @@ function Checkout(props) {
             dispatch({ type: ORDER_SET, payload: order });
             localStorage.setItem('order_receipt', JSON.stringify(order));
             await refreshCart();
-            // Router.push('/confirmation');
+            Router.push('/confirmation');
+            console.log(data.error.message)
         } catch (err) {
             const errList = [err.data.error.message];
             const errs = err.data.error.errors;

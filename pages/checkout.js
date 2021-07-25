@@ -140,14 +140,15 @@ function Checkout(props) {
             localStorage.setItem('order_receipt', JSON.stringify(order));
             await refreshCart();
             Router.push('/confirmation');
-            console.log(data.error.message)
+            // console.log(data.error.message)
         } catch (err) {
-            const errList = [err.data.error.message];
-            const errs = err.data.error.errors;
-            for (const index in errs) {
-                errList.push(`${index}: ${errs[index]}`);
-            }
-            setErrors(errList);
+            console.error(err)
+            // const errList = [err.data.error.message];
+            // const errs = err.data.error.errors;
+            // for (const index in errs) {
+            //     errList.push(`${index}: ${errs[index]}`);
+            // }
+            // setErrors(errList);
         }
     };
 
@@ -197,7 +198,7 @@ function Checkout(props) {
     const handleShippingOptionChange = (e) => {
         const currentValue = e.target.value;
         setShippingOption(currentValue);
-        console.log(currentValue);
+        // console.log(currentValue);
     };
 
     const fetchShippingOptions = async (
